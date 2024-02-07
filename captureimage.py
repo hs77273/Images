@@ -2,17 +2,17 @@ import cv2
 from datetime import datetime
 import os
 
-cap1 = cv2.VideoCapture(0)
+cap1 = cv2.VideoCapture(4)
 if not cap1.isOpened():
     print("Error: Could not open camera 1")
     exit()
 
-cap2 = cv2.VideoCapture(1)
+cap2 = cv2.VideoCapture(5)
 if not cap2.isOpened():
     print("Error: Could not open camera 2")
     exit()
 
-save_folder = "captures"
+save_folder = "Aggresive"
 
 while True:
     ret1, frame1 = cap1.read()
@@ -25,12 +25,15 @@ while True:
         print("Error: Unable to read frame from camera 2")
         break
 
-    colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)]
-    seat_coordinates = [(15, 508, 320, 10, "A1"),(564, 508, 896, 10, "A2"),(920, 508, 1234, 5, "B1"),(1429, 508, 1767, 11, "B2")]
+    colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (0,255,255)]
+    seat_coordinates = [(0, 440, 290, 15, "A1"),(330, 450, 620, 15, "A2"),(690, 440, 950, 120, "B1"),(980, 440, 1210, 120, "B2")]
     concatenated_frame = cv2.hconcat([frame1, frame2])
+    concatenated_frame = cv2.resize(concatenated_frame,(1280,480))
     os.makedirs(save_folder, exist_ok=True)
 
-    for i, ((x1, y1, x2, y2, name), color) in zip(seat_coordinates, colors):
+    for i in range(len(seat_coordinates)):
+        x1, y1, x2, y2, name = seat_coordinates[i]
+        color = colors[i]
         seat_roi = concatenated_frame[y2:y1, x1:x2]
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         image_filename = f"{save_folder}/Seat_{name}_{timestamp}.png"
